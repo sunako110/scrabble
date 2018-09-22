@@ -74,12 +74,88 @@ public class GridButton extends JButton implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		letter = "a";
+		char letter = LetterButton.select;
+		
 		switch(letter) {
-		case "a":
+		case (char)'a':
 			setIcon(A);
 			break;
-		case "":
+		case (char)'b':
+			setIcon(B);
+			break;
+		case (char)'c':
+			setIcon(C);
+			break;
+		case (char)'d':
+			setIcon(D);
+			break;
+		case (char)'e':
+			setIcon(E);
+			break;
+		case (char)'f':
+			setIcon(F);
+			break;
+		case (char)'g':
+			setIcon(G);
+			break;
+		case (char)'h':
+			setIcon(H);
+			break;
+		case (char)'i':
+			setIcon(I);
+			break;
+		case (char)'j':
+			setIcon(J);
+			break;
+		case (char)'k':
+			setIcon(K);
+			break;
+		case (char)'l':
+			setIcon(L);
+			break;
+		case (char)'m':
+			setIcon(M);
+			break;
+		case (char)'n':
+			setIcon(N);
+			break;
+		case (char)'o':
+			setIcon(O);
+			break;
+		case (char)'p':
+			setIcon(P);
+			break;
+		case (char)'q':
+			setIcon(Q);
+			break;
+		case (char)'r':
+			setIcon(R);
+			break;
+		case (char)'s':
+			setIcon(S);
+			break;
+		case (char)'t':
+			setIcon(T);
+			break;
+		case (char)'u':
+			setIcon(U);
+			break;
+		case (char)'v':
+			setIcon(V);
+			break;
+		case (char)'w':
+			setIcon(W);
+			break;
+		case (char)'x':
+			setIcon(X);
+			break;
+		case (char)'y':
+			setIcon(Y);
+			break;
+		case (char)'z':
+			setIcon(Z);
+			break;
+		default:
 			setIcon(null);
 			break;
 		}
