@@ -1,6 +1,9 @@
 package scramble;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -12,6 +15,7 @@ public class mainwindow{
 	//JPanel numberField = new JPanel(null);
 	GridButton buttons[][] = new GridButton[20][20];
 	LetterButton letters[] = new LetterButton[7];
+	ClearButton clearButton; 
 	
 	public mainwindow() {
 		Field.setLayout(new GridLayout(20, 20, 0, 0));
@@ -23,6 +27,23 @@ public class mainwindow{
 		setGridButton(Field);
 		setLetterBar(gameFrame);
 		addLabelToFrame(gameFrame);
+		setClearButton(gameFrame);
+		
+		
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < 7; i++) {
+					letters[i].setEnabled(true);
+					}
+				for (int i = 0; i < 20; i++) {
+					for (int j = 0; j < 20; j++) {
+						buttons[i][j].setIcon(null);
+					}
+				}	
+				
+			}
+		});
 		
 		gameFrame.add(Field);
 	
@@ -60,6 +81,15 @@ public class mainwindow{
 			}
 		}
 	}
+	
+	
+	public void setClearButton(JFrame frame) {
+		clearButton = new ClearButton("Clear");
+		clearButton.setBounds(640,150,100,40);
+		frame.add(clearButton);
+	}
+	
+	
 	
 	public static void main(String[] args) {
 		new mainwindow();
