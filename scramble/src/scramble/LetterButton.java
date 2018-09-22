@@ -8,6 +8,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class LetterButton extends JButton implements ActionListener {
+	static char select;
+	
 	ImageIcon A;
 	ImageIcon B;
 	ImageIcon C;
@@ -167,7 +169,7 @@ public class LetterButton extends JButton implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		
+		select = this.getLetter();
 		
 	}
 
