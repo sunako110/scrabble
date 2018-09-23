@@ -93,7 +93,6 @@ public class mainwindow{
 		        ActionListener click = new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(selectedLetter!=0) {
-							tmpbutton.setIcon(selectedLetter);
 							tmpbutton.setLetter(selectedLetter);
 							for(int k = 0; k<7; k++) {
 								if(letters[k].isFocusPainted()) {
@@ -121,7 +120,7 @@ public class mainwindow{
 					}
 				for (int i = 0; i < 20; i++) {
 					for (int j = 0; j < 20; j++) {
-						buttons[i][j].setIcon(null);
+						buttons[i][j].setLetter((char)0);
 					}
 				}	
 				
