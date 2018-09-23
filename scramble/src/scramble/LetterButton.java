@@ -1,17 +1,11 @@
 package scramble;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class LetterButton extends JButton implements ActionListener {
-	
-	static char select;
-	
+public class LetterButton extends JButton{
 	ImageIcon A;
 	ImageIcon B;
 	ImageIcon C;
@@ -160,18 +154,11 @@ public class LetterButton extends JButton implements ActionListener {
 			setIcon(null);
 			break;
 		}
-		
-		this.addActionListener(this);
 	}
 	
 	public char getLetter() {
 		return letter;
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		select = this.getLetter();
-		setEnabled(false);
-	}
+	
 	
 }
