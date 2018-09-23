@@ -72,9 +72,6 @@ public class GridButton extends JButton{
 	
 	public void setLetter(char letter) {
 		this.letter = letter;
-	}
-	
-	public void setIcon(char letter) {
 		switch(letter) {
 		case (char)'a':
 			setIcon(A);
