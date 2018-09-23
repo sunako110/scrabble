@@ -1,15 +1,10 @@
 package scramble;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 
-public class GridButton extends JButton implements MouseListener {
+public class GridButton extends JButton{
 	ImageIcon A;
 	ImageIcon B;
 	ImageIcon C;
@@ -36,8 +31,10 @@ public class GridButton extends JButton implements MouseListener {
 	ImageIcon X;
 	ImageIcon Y;
 	ImageIcon Z;
+	int row;
+	int column;
 	
-	String letter = null;
+	char letter = 0;
 	/**
 	 * 
 	 */
@@ -71,127 +68,96 @@ public class GridButton extends JButton implements MouseListener {
 		Y = new ImageIcon("src/image/letter-y.png");
 		Z = new ImageIcon("src/image/letter-z.png");
 		
-		this.addMouseListener(this);
 	}
-
-	public void mouseClicked(MouseEvent e){
-		if(e.getClickCount() == 1) {
-			char letter = LetterButton.select;
-			
-			switch(letter) {
-			case (char)'a':
-				setIcon(A);
-				break;
-			case (char)'b':
-				setIcon(B);
-				break;
-			case (char)'c':
-				setIcon(C);
-				break;
-			case (char)'d':
-				setIcon(D);
-				break;
-			case (char)'e':
-				setIcon(E);
-				break;
-			case (char)'f':
-				setIcon(F);
-				break;
-			case (char)'g':
-				setIcon(G);
-				break;
-			case (char)'h':
-				setIcon(H);
-				break;
-			case (char)'i':
-				setIcon(I);
-				break;
-			case (char)'j':
-				setIcon(J);
-				break;
-			case (char)'k':
-				setIcon(K);
-				break;
-			case (char)'l':
-				setIcon(L);
-				break;
-			case (char)'m':
-				setIcon(M);
-				break;
-			case (char)'n':
-				setIcon(N);
-				break;
-			case (char)'o':
-				setIcon(O);
-				break;
-			case (char)'p':
-				setIcon(P);
-				break;
-			case (char)'q':
-				setIcon(Q);
-				break;
-			case (char)'r':
-				setIcon(R);
-				break;
-			case (char)'s':
-				setIcon(S);
-				break;
-			case (char)'t':
-				setIcon(T);
-				break;
-			case (char)'u':
-				setIcon(U);
-				break;
-			case (char)'v':
-				setIcon(V);
-				break;
-			case (char)'w':
-				setIcon(W);
-				break;
-			case (char)'x':
-				setIcon(X);
-				break;
-			case (char)'y':
-				setIcon(Y);
-				break;
-			case (char)'z':
-				setIcon(Z);
-				break;
-			default:
-				setIcon(null);
-				break;
-			}
-			
-			
-			
-		}else if (e.getClickCount() == 2){
-			setIcon(null);
-		}
-}
-
 	
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void setLetter(char letter) {
+		this.letter = letter;
+	}
+	
+	public void setIcon(char letter) {
+		switch(letter) {
+		case (char)'a':
+			setIcon(A);
+			break;
+		case (char)'b':
+			setIcon(B);
+			break;
+		case (char)'c':
+			setIcon(C);
+			break;
+		case (char)'d':
+			setIcon(D);
+			break;
+		case (char)'e':
+			setIcon(E);
+			break;
+		case (char)'f':
+			setIcon(F);
+			break;
+		case (char)'g':
+			setIcon(G);
+			break;
+		case (char)'h':
+			setIcon(H);
+			break;
+		case (char)'i':
+			setIcon(I);
+			break;
+		case (char)'j':
+			setIcon(J);
+			break;
+		case (char)'k':
+			setIcon(K);
+			break;
+		case (char)'l':
+			setIcon(L);
+			break;
+		case (char)'m':
+			setIcon(M);
+			break;
+		case (char)'n':
+			setIcon(N);
+			break;
+		case (char)'o':
+			setIcon(O);
+			break;
+		case (char)'p':
+			setIcon(P);
+			break;
+		case (char)'q':
+			setIcon(Q);
+			break;
+		case (char)'r':
+			setIcon(R);
+			break;
+		case (char)'s':
+			setIcon(S);
+			break;
+		case (char)'t':
+			setIcon(T);
+			break;
+		case (char)'u':
+			setIcon(U);
+			break;
+		case (char)'v':
+			setIcon(V);
+			break;
+		case (char)'w':
+			setIcon(W);
+			break;
+		case (char)'x':
+			setIcon(X);
+			break;
+		case (char)'y':
+			setIcon(Y);
+			break;
+		case (char)'z':
+			setIcon(Z);
+			break;
+		default:
+			setIcon(null);
+			break;
+		}
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 }
