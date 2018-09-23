@@ -140,6 +140,7 @@ public class mainwindow{
 					field.add(word[i]);
 				}else {
 					vote[i] = new JButton("YES");
+					vote[i].setFocusable(false);
 					field.add(vote[i]);
 				}
 			}
