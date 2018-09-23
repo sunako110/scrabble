@@ -12,31 +12,40 @@ import javax.swing.JTextArea;
 public class mainwindow{
 	
 	JFrame gameFrame = new JFrame("Scramble");
-	JButton clearButton = new JButton("clear");
-	JButton playButton = new JButton("Play");
+	JButton clearButton = new JButton("Clear");
+	JButton commitButton = new JButton("Commit");
 	JButton passButton = new JButton("Pass");
+	JButton exitButton = new JButton("exit");
 	final JPanel Field = new JPanel();
-	//JPanel numberField = new JPanel(null);
+	JPanel votingField = new JPanel();
 	GridButton buttons[][] = new GridButton[20][20];
 	LetterButton letters[] = new LetterButton[7];
+	JButton vote[] = new JButton[10];
+	JTextArea word[] = new JTextArea[10];
 	
 	char selectedLetter = 0;
-	char letter = 0;
 	
 	public mainwindow() {
 		Field.setLayout(new GridLayout(20, 20, 0, 0));
 		Field.setBounds(20, 20, 20 * 30, 20 * 30);
 		Field.setOpaque(false);
-		gameFrame.setSize(20 + 20 * 30 + 320, 20 + 20 * 30 + 80);
+		votingField.setLayout(new GridLayout(10,2,0,0));
+		votingField.setBounds(640, 270, 280, 300);
+		gameFrame.setSize(20 + 20 * 30 + 320, 20 + 20 * 30 + 40);
 		gameFrame.setLayout(null);
 		
 		setGridButton(Field);
+		setVotingArea(votingField);
 		setLetterBar(gameFrame);
 		setClearButton(gameFrame);
-		setPlayButton(gameFrame);
-		addLabelToFrame(gameFrame);
+		setCommitButton(gameFrame);
+		setPassButton(gameFrame);
+		setExitButton(gameFrame);
+		addIntroduction(gameFrame);
+		addVotingAreaLable(gameFrame);
 		
 		gameFrame.add(Field);
+		gameFrame.add(votingField);
 	
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameFrame.setLocationRelativeTo(null);
@@ -45,7 +54,7 @@ public class mainwindow{
 
 	}
 	
-	public void addLabelToFrame(JFrame frame) {
+	public void addIntroduction(JFrame frame) {
 		JTextArea introduction = new JTextArea(5,30);
 		introduction.setText("How to play:\n"
 		+ "Please select the alphabet first,\n" +"and then select where you want to place it.");
@@ -54,6 +63,16 @@ public class mainwindow{
 		introduction.setBackground(null);
 		frame.add(introduction);
 	}
+	
+	public void addVotingAreaLable(JFrame frame) {
+		JTextArea introduction = new JTextArea(5,30);
+		introduction.setText("Do you think it is a word?");
+		introduction.setBounds(640, 250, 300, 20);
+		introduction.setEditable(false);
+		introduction.setBackground(null);
+		frame.add(introduction);
+	}
+	
 	
 	public void setLetterBar(JFrame frame) {
 		for(int i = 0; i < 7; i++) {
@@ -113,8 +132,22 @@ public class mainwindow{
 		
 	}
 	
+	public void setVotingArea(JPanel field) {
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 2; j++) {
+				if(j==0) {
+					word[i] = new JTextArea();
+					field.add(word[i]);
+				}else {
+					vote[i] = new JButton("YES");
+					field.add(vote[i]);
+				}
+			}
+		}
+	}
+	
 	public void setClearButton(JFrame frame) {
-		clearButton.setBounds(640,150,80,40);
+		clearButton.setBounds(640,150,90,40);
 		clearButton.setFocusable(false);
 		frame.add(clearButton);
 		ActionListener click = new ActionListener() {
@@ -137,10 +170,10 @@ public class mainwindow{
 	}
 	
 	
-	public void setPlayButton(JFrame frame) {
-		playButton.setBounds(725,150,80,40);
-		playButton.setFocusable(false);
-		frame.add(playButton);
+	public void setCommitButton(JFrame frame) {
+		commitButton.setBounds(735,150,90,40);
+		commitButton.setFocusable(false);
+		frame.add(commitButton);
 		ActionListener click = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -159,7 +192,32 @@ public class mainwindow{
 				}
 			}
 		};
-		playButton.addActionListener(click);
+		commitButton.addActionListener(click);
+	}
+	
+	public void setPassButton(JFrame frame) {
+		passButton.setBounds(830,150,90,40);
+		passButton.setFocusable(false);
+		frame.add(passButton);
+		ActionListener click = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			}
+		};
+		passButton.addActionListener(click);
+	}
+	
+	public void setExitButton(JFrame frame) {
+		exitButton.setBounds(830,585,90,40);
+		exitButton.setFocusable(false);
+		frame.add(exitButton);
+		ActionListener click = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		};
+		exitButton.addActionListener(click);
 	}
 
 	
