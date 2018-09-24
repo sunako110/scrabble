@@ -34,6 +34,7 @@ public class LetterButton extends JButton{
 	ImageIcon Z = new ImageIcon("src/image/letter-z.png");
 	
 	char letter = 0;
+	boolean selected = false;
 	/**
 	 * 
 	 */
@@ -225,5 +226,11 @@ public class LetterButton extends JButton{
 		}
 	}
 	
+	public boolean isSelected() {
+		return this.selected;
+	}
 	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
 }

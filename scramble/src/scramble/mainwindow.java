@@ -8,18 +8,22 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JOptionPane;
 
-public class mainwindow{
+public class mainwindow extends JFrame {
+	public static final int BOARD_SIZE = 20;
+	public static final int HAND_SIZE = 7;
+	private static final long serialVersionUID = 1L;
 	
 	JFrame gameFrame = new JFrame("Scramble");
 	JButton clearButton = new JButton("Clear");
 	JButton commitButton = new JButton("Commit");
 	JButton passButton = new JButton("Pass");
-	JButton exitButton = new JButton("exit");
+	JButton exitButton = new JButton("Exit");
 	final JPanel Field = new JPanel();
 	JPanel votingField = new JPanel();
-	GridButton buttons[][] = new GridButton[20][20];
-	LetterButton letters[] = new LetterButton[7];
+	GridButton buttons[][] = new GridButton[BOARD_SIZE][BOARD_SIZE];
+	LetterButton letters[] = new LetterButton[HAND_SIZE];
 	JButton vote[] = new JButton[10];
 	JTextArea word[] = new JTextArea[10];
 	
@@ -42,29 +46,39 @@ public class mainwindow{
 		setPassButton(gameFrame);
 		setExitButton(gameFrame);
 		addIntroduction(gameFrame);
-		addVotingAreaLable(gameFrame);
+		addVotingAreaLabel(gameFrame);
 		
 		gameFrame.add(Field);
 		gameFrame.add(votingField);
 	
-		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameFrame.setLocationRelativeTo(null);
 		gameFrame.setVisible(true);
+		gameFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-
+		gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(gameFrame, 
+		            "Are you sure you want to close this window?", "Close Window?", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		            	System.exit(0);
+		        }
+		    }
+		});
 	}
 	
 	public void addIntroduction(JFrame frame) {
 		JTextArea introduction = new JTextArea(5,30);
 		introduction.setText("How to play:\n"
-		+ "Please select the alphabet first,\n" +"and then select where you want to place it.");
+		+ "Please select the alphabet first,\n" + "and then select where you want to place it.");
 		introduction.setBounds(640, 20, 300, 100);
 		introduction.setEditable(false);
 		introduction.setBackground(null);
 		frame.add(introduction);
 	}
 	
-	public void addVotingAreaLable(JFrame frame) {
+	public void addVotingAreaLabel(JFrame frame) {
 		JTextArea introduction = new JTextArea(5,30);
 		introduction.setText("Do you think it is a word?");
 		introduction.setBounds(640, 250, 300, 20);
@@ -75,61 +89,70 @@ public class mainwindow{
 	
 	
 	public void setLetterBar(JFrame frame) {
-		for(int i = 0; i < 7; i++) {
+		ActionListener click = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LetterButton tmpbutton = (LetterButton) e.getSource();
+				if (tmpbutton.isFocusPainted()) {
+					for (int j = 0; j < HAND_SIZE; j++) {
+						refreshFocusPaint(letters);
+					}
+				} else {
+					refreshFocusPaint(letters);
+					tmpbutton.setFocusPainted(true);
+				}
+				if (tmpbutton.isFocusPainted()) {
+					selectedLetter = tmpbutton.getLetter();
+				}
+			}
+		};	
+			
+		for (int i = 0; i < HAND_SIZE; i++) {
 			letters[i]= new LetterButton();
 			letters[i].setBounds(640 + i*40, 200, 40, 40);
 			letters[i].setFocusPainted(false);
 			frame.add(letters[i]);
-			LetterButton tmpbutton = letters[i];
-			ActionListener click = new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(tmpbutton.isFocusPainted()) {
-						for(int j = 0; j < 7; j++) {
-							refreshFocusPaint(letters);
-						}
-					}else {
-						refreshFocusPaint(letters);
-						tmpbutton.setFocusPainted(true);
-					}
-					if(tmpbutton.isFocusPainted()) {
-						selectedLetter = tmpbutton.getLetter();
-					}
-				}
-			};
 			letters[i].addActionListener(click);		
 		}
 	}
 	
 	public void refreshFocusPaint(LetterButton[] letters) {
-		for(int j = 0; j < 7; j++) {
+		for(int j = 0; j < HAND_SIZE; j++) {
 			letters[j].setFocusPainted(false);
 		}
 	}
 		
 	public void setGridButton(JPanel field) {
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
+        ActionListener click = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GridButton tmpbutton = (GridButton) e.getSource();
+				if (tmpbutton.isEnabled() && (selectedLetter != 0)) {
+					int index = tmpbutton.getLetterIndex();
+					if (index != -1) {
+						letters[index].setEnabled(true);
+						letters[index].setSelected(false);
+					}
+					tmpbutton.setLetter(selectedLetter);
+					
+					for (int i = 0; i < HAND_SIZE; i++) {
+						if (letters[i].isFocusPainted()) {
+							tmpbutton.setLetterIndex(i);
+							letters[i].setEnabled(false);
+							letters[i].setSelected(true);
+						}
+					}
+				}
+				selectedLetter = 0;
+			}
+		};
+		
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
 				buttons[i][j] = new GridButton();
 				buttons[i][j].setFocusable(false);
 		        field.add(buttons[i][j]);
-		        GridButton tmpbutton = buttons[i][j];
-		        ActionListener click = new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if(tmpbutton.isEnabled()&&(selectedLetter!=0)) {
-							tmpbutton.setLetter(selectedLetter);
-							for(int k = 0; k<7; k++) {
-								if(letters[k].isFocusPainted()) {
-									letters[k].setEnabled(false);
-								}
-							}
-						}
-						selectedLetter = 0;
-					}
-				};
 				buttons[i][j].addActionListener(click);
 			}
 		}
-		
 	}
 	
 	public void setVotingArea(JPanel field) {
@@ -153,14 +176,14 @@ public class mainwindow{
 		frame.add(clearButton);
 		ActionListener click = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				for(int i = 0; i < 7; i++) {
+				for(int i = 0; i < HAND_SIZE; i++) {
 					letters[i].setEnabled(true);
 					letters[i].setFocusPainted(false);
 					}
-				for (int i = 0; i < 20; i++) {
-					for (int j = 0; j < 20; j++) {
+				for (int i = 0; i < BOARD_SIZE; i++) {
+					for (int j = 0; j < BOARD_SIZE; j++) {
 						if(buttons[i][j].isEnabled()) {
-						buttons[i][j].setLetter((char)0);
+						buttons[i][j].setLetter((char) 0);
 						}
 					}
 				}	
@@ -178,18 +201,21 @@ public class mainwindow{
 		ActionListener click = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < 20; i++) {
-					for (int j = 0; j < 20; j++) {
-						if((buttons[i][j].isEnabled()) && (buttons[i][j].getIcon()!=null)) {
+				for (int i = 0; i < BOARD_SIZE; i++) {
+					for (int j = 0; j < BOARD_SIZE; j++) {
+						if ((buttons[i][j].isEnabled()) && (buttons[i][j].getIcon() != null)) {
 							//System.out.println("play check");
 							buttons[i][j].setEnabled(false);
-							
 						}
 					}
-				}	
-				for(int i = 0; i < 7; i++) {
-					letters[i].setEnabled(true);
-					letters[i].refreshLetter();
+				}
+				for (int i = 0; i < HAND_SIZE; i++) {
+					if (letters[i].isSelected()) {
+						letters[i].setEnabled(true);
+						letters[i].setSelected(false);
+						letters[i].refreshLetter();
+					}
+					
 				}
 			}
 		};
@@ -215,7 +241,13 @@ public class mainwindow{
 		frame.add(exitButton);
 		ActionListener click = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
+	            int confirm = JOptionPane.showOptionDialog(frame,
+	            		"Are you sure you want to close this window?", 
+	            		"Close Window?", JOptionPane.YES_NO_OPTION,
+	                    JOptionPane.QUESTION_MESSAGE, null, null, null);
+	            if (confirm == JOptionPane.YES_OPTION) {
+	                System.exit(0);
+	            }
 			}
 		};
 		exitButton.addActionListener(click);
