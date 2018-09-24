@@ -1,9 +1,9 @@
 package Scrabble;
 
-// Default constants for the score and frequency of each letter
+// Default constants for the (score, frequency) of each letter
 
 public enum TileAttributes {
-	// Uses frequencies of Super Scrabble	
+	// Uses frequencies of SuperScrabble
 	
 	A(1, 16), B(3, 4), C(3, 6), D(2, 8), E(1, 24), F(4, 4), 
 	G(2, 5), H(4, 5), I(1, 13), J(8, 2), K(5, 2), L(1, 7), 
@@ -23,6 +23,7 @@ public enum TileAttributes {
 		this.frequency = frequency;
 	}
 	
+	// Getter methods
 	public int getFrequency() {
 		return this.frequency;
 	}

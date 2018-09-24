@@ -8,6 +8,7 @@ public class ScrabbleTile {
 	// Empty constructor initializes empty tile (to empty character symbol)
 	public ScrabbleTile() {
 		this.letter = TileAttributes.EMPTY_SYMBOL;
+		this.points = 0;
 	}
 	
 	// Create tile with letter and default so
@@ -45,7 +46,7 @@ public class ScrabbleTile {
 		return this.points;
 	}
 	
-	public void setChar(char letter) {
+	public void setLetter(char letter) {
 		this.letter = letter;
 	}
 	
@@ -57,5 +58,16 @@ public class ScrabbleTile {
 	@Override
 	public String toString() {
 		return "(\"" + this.letter + "\", " + this.points + ")";
+	}
+	
+	// Tiles are equal if both letter and point fields are the same
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !ScrabbleTile.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+		final ScrabbleTile tile = (ScrabbleTile) obj;
+		
+		return (this.letter == tile.letter && this.points == tile.points);
 	}
 }

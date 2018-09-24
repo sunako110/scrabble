@@ -2,7 +2,6 @@ package Scrabble;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class ScrabbleGame {
 	public static final int BOARD_SIZE = 20;
@@ -17,7 +16,7 @@ public class ScrabbleGame {
 		// Initialize empty board
 		board = new ScrabbleTile[BOARD_SIZE][BOARD_SIZE];
 		for (int i = 0; i < BOARD_SIZE; i++) {
-			for (int j = 0; i < BOARD_SIZE; j++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
 				board[i][j] = new ScrabbleTile();
 			}
 		}
@@ -42,24 +41,33 @@ public class ScrabbleGame {
 			}
 		}
 		
-		List<Character> list = Arrays.asList(tileBag);
-		Collections.shuffle(list);
-		tileBag = list.toArray(new Character[list.size()]);
+		// Randomize tile sequence and Player order
+		Collections.shuffle(Arrays.asList(tileBag));
+		Collections.shuffle(Arrays.asList(player));
 		
 		this.player = player;
 		this.numPlayers = player.length;
 	}
 	
-	public boolean placeTile(ScrabbleTile tile, int column, int row) {
-		if (!emptyTile(column, row)) {
-			return false;
-		}
-		board[column][row] = tile;
-		return true;
+	public String printTiles() {
+		return Arrays.toString(tileBag);
 	}
 	
-	public boolean emptyTile(int column, int row) {
-		return board[column][row].getLetter() == TileAttributes.EMPTY_SYMBOL;
+	public ScrabbleTile getBoardCell(ScrabbleCell cell) {
+		return board[cell.getColumn()][cell.getRow()];
+	}
+	
+	public boolean emptyCell(ScrabbleCell cell) {
+		return getBoardCell(cell).getLetter() == TileAttributes.EMPTY_SYMBOL;
+	}
+	
+	public boolean placeTile(ScrabbleMove move) {
+		ScrabbleCell cell = move.getCell();		
+		if (!emptyCell(cell)) {
+			return false;
+		}
+		board[cell.getColumn()][cell.getRow()] = move.getTile();
+		return true;
 	}
 	
 	public ScrabbleTile getTile() {
@@ -76,10 +84,34 @@ public class ScrabbleGame {
 		}
 	}
 	
-	public void startHand() {
+	public void dealHand() {
 		for (int i = 0; i < numPlayers; i++) {
 			fillHand(player[i]);
 		}
 	}
 	
+	// Checks whether player has all tiles to make move
+	// At least one tile must also be adjacent to an existing tile
+	public boolean validMove(ScrabbleTurn turn) {
+		ScrabblePlayer player = turn.getPlayer();
+		
+		if (!player.hasTiles(turn)) {
+			return false;
+		}
+		
+		// At least one tile per turn must be adjacent to existing tiles
+		for (ScrabbleMove move : turn.getMoves()) {
+			ScrabbleCell[] adj = move.getCell().adjacentCells();
+			for (ScrabbleCell cell : adj) {
+				if (!emptyCell(cell)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean firstMove(ScrabbleMove[] move) {
+		return move.length >= 2;
+	}
 }
