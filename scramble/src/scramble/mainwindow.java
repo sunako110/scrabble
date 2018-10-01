@@ -9,7 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
-
+import java.awt.Color;
+import javax.swing.SwingConstants;
 public class mainwindow extends JFrame {
 	public static final int BOARD_SIZE = 20;
 	public static final int HAND_SIZE = 7;
@@ -70,8 +71,8 @@ public class mainwindow extends JFrame {
 	
 	public void addIntroduction(JFrame frame) {
 		JTextArea introduction = new JTextArea(5,30);
-		introduction.setText("How to play:\n"
-		+ "Please select the alphabet first,\n" + "and then select where you want to place it.");
+		introduction.setText("How to play:\nPlease select a tile,\n"
+				+ "and then select where you want to place it.");
 		introduction.setBounds(640, 20, 300, 100);
 		introduction.setEditable(false);
 		introduction.setBackground(null);
@@ -87,29 +88,35 @@ public class mainwindow extends JFrame {
 		frame.add(introduction);
 	}
 	
-	
 	public void setLetterBar(JFrame frame) {
 		ActionListener click = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LetterButton tmpbutton = (LetterButton) e.getSource();
 				if (tmpbutton.isFocusPainted()) {
-					for (int j = 0; j < HAND_SIZE; j++) {
-						refreshFocusPaint(letters);
-					}
-				} else {
 					refreshFocusPaint(letters);
-					tmpbutton.setFocusPainted(true);
-				}
-				if (tmpbutton.isFocusPainted()) {
+					tmpbutton.setFocusPainted(false);
+					tmpbutton.setBackground(new Color(3, 59, 90));
+				} else {
 					selectedLetter = tmpbutton.getLetter();
+					refreshFocusPaint(letters);
+					tmpbutton.setBackground(Color.RED);
+					tmpbutton.setFocusPainted(true);
 				}
 			}
 		};	
 			
 		for (int i = 0; i < HAND_SIZE; i++) {
+			// Request letter and send
+			
 			letters[i]= new LetterButton();
 			letters[i].setBounds(640 + i*40, 200, 40, 40);
 			letters[i].setFocusPainted(false);
+	        letters[i].setForeground(new Color(0, 135, 200).brighter());
+	        letters[i].setHorizontalTextPosition(SwingConstants.CENTER);
+	        letters[i].setBorder(null);
+	        letters[i].setBackground(new Color(3, 59, 90));
+	        letters[i].setHoverBackgroundColor(new Color(3, 59, 90).brighter());
+	        letters[i].setPressedBackgroundColor(Color.PINK);
 			frame.add(letters[i]);
 			letters[i].addActionListener(click);		
 		}
@@ -138,7 +145,16 @@ public class mainwindow extends JFrame {
 							tmpbutton.setLetterIndex(i);
 							letters[i].setEnabled(false);
 							letters[i].setSelected(true);
+							letters[i].setBackground(new Color(3, 59, 90));
 						}
+					}
+				}
+				if (tmpbutton.isEnabled() && selectedLetter == 0) {
+					int index = tmpbutton.getLetterIndex();
+					if (index != -1) {
+						letters[index].setEnabled(true);
+						letters[index].setSelected(false);
+						tmpbutton.setLetter((char) 0);
 					}
 				}
 				selectedLetter = 0;
@@ -210,9 +226,10 @@ public class mainwindow extends JFrame {
 					}
 				}
 				for (int i = 0; i < HAND_SIZE; i++) {
-					if (letters[i].isSelected()) {
+					if (letters[i].selectedCheck()) {
 						letters[i].setEnabled(true);
-						letters[i].setSelected(false);
+						letters[i].selectedSet(false);
+						letters[i].setEnabled(true);
 						letters[i].refreshLetter();
 					}
 					
