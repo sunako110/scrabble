@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -34,6 +35,8 @@ public class LoginUI extends JFrame {
 	
 	private ScrabbleClient client;
 	private ScrabbleServerInt server;
+	
+	ArrayList<String> nameListUI = new ArrayList<String>();
 
 	/**
 	 * Launch the application.
@@ -62,24 +65,21 @@ public class LoginUI extends JFrame {
 		    		    client.setLoginUI(this);
 					server=(ScrabbleServerInt)Naming.lookup("rmi://"+addressField.getText()+"/myabc");
 					server.login(client);
-					server.publishPlayer(client.getName());
+					server.publishPlayer();
 		    	}catch(Exception e){e.printStackTrace();JOptionPane.showMessageDialog(contentPane, "ERROR, we wouldn't connect....");}		  
 		      }else{
 			}
 		  }  
 	
-	 public void updateUsers(Vector v){
-	      if(v!=null) for (int i=0;i<v.size();i++){
-	    	  try{  
-	    		  String tmp=((ScrabbleClientInt)v.get(i)).getName();
-	    		  textArea.append(tmp+"\n");
-	    	  }catch(Exception e){e.printStackTrace();}
-	      }
-	  }
 	 
 	 
-	public void addPlayerPool(String name) {
-		textArea.append(textArea.getText()+"\n"+name);
+	public void addPlayerPool(ArrayList<String> name) {
+		textArea.setText(null);
+		for(int i=0;i<name.size();i++) {
+			textArea.append(name.get(i) + "\n");
+		}
+		
+		//textArea.getText()+"\n"+
 	}
 	
 	
@@ -132,7 +132,10 @@ public class LoginUI extends JFrame {
 		contentPane.add(btnStart);
 		
 		btnConnect.addActionListener(new ActionListener(){
-		      public void actionPerformed(ActionEvent e){ doConnect();   }  });
+		   public void actionPerformed(ActionEvent e){ 
+		    	  doConnect();   
+		   } 
+		});
 		
 		
 		
