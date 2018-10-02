@@ -22,7 +22,7 @@ public class mainwindow extends JFrame {
 	JButton passButton = new JButton("Pass");
 	JButton exitButton = new JButton("Exit");
 	final JPanel Field = new JPanel();
-	JPanel votingField = new JPanel();
+	//JPanel votingField = new JPanel();
 	GridButton buttons[][] = new GridButton[BOARD_SIZE][BOARD_SIZE];
 	LetterButton letters[] = new LetterButton[HAND_SIZE];
 	JButton vote[] = new JButton[10];
@@ -34,13 +34,13 @@ public class mainwindow extends JFrame {
 		Field.setLayout(new GridLayout(20, 20, 0, 0));
 		Field.setBounds(20, 20, 20 * 30, 20 * 30);
 		Field.setOpaque(false);
-		votingField.setLayout(new GridLayout(10,2,0,0));
-		votingField.setBounds(640, 270, 280, 300);
+		//votingField.setLayout(new GridLayout(10,2,0,0));
+		//votingField.setBounds(640, 270, 280, 300);
 		gameFrame.setSize(20 + 20 * 30 + 320, 20 + 20 * 30 + 40);
 		gameFrame.setLayout(null);
 		
 		setGridButton(Field);
-		setVotingArea(votingField);
+		//setVotingArea(votingField);
 		setLetterBar(gameFrame);
 		setClearButton(gameFrame);
 		setCommitButton(gameFrame);
@@ -48,9 +48,11 @@ public class mainwindow extends JFrame {
 		setExitButton(gameFrame);
 		addIntroduction(gameFrame);
 		addVotingAreaLabel(gameFrame);
+		addVotingAreaLabel(gameFrame);
+		addVotingArea(gameFrame);
 		
 		gameFrame.add(Field);
-		gameFrame.add(votingField);
+		//gameFrame.add(votingField);
 	
 		gameFrame.setLocationRelativeTo(null);
 		gameFrame.setVisible(true);
@@ -81,12 +83,13 @@ public class mainwindow extends JFrame {
 	
 	public void addVotingAreaLabel(JFrame frame) {
 		JTextArea introduction = new JTextArea(5,30);
-		introduction.setText("Do you think it is a word?");
+		introduction.setText("Do you think they are all proper words?");
 		introduction.setBounds(640, 250, 300, 20);
 		introduction.setEditable(false);
 		introduction.setBackground(null);
 		frame.add(introduction);
 	}
+	
 	
 	public void setLetterBar(JFrame frame) {
 		ActionListener click = new ActionListener() {
@@ -171,19 +174,21 @@ public class mainwindow extends JFrame {
 		}
 	}
 	
-	public void setVotingArea(JPanel field) {
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 2; j++) {
-				if(j==0) {
-					word[i] = new JTextArea();
-					field.add(word[i]);
-				}else {
-					vote[i] = new JButton("YES");
-					vote[i].setFocusable(false);
-					field.add(vote[i]);
-				}
-			}
-		}
+	public void addVotingArea(JFrame frame) {		
+		
+		wordArea = new JTextArea(10,10);
+		wordArea.setBounds(640, 300, 150,100);
+		voteButtonYes = new JButton("Yes");
+		voteButtonYes.setFocusable(false);
+		voteButtonYes.setBounds(810, 300, 100, 40);
+		voteButtonNo = new JButton("No");
+		voteButtonNo.setFocusable(false);
+		voteButtonNo.setBounds(810, 360, 100, 40);
+		
+		frame.add(wordArea);
+		frame.add(voteButtonYes);
+		frame.add(voteButtonNo);
+		
 	}
 	
 	public void setClearButton(JFrame frame) {
