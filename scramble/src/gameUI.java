@@ -36,7 +36,8 @@ public class gameUI extends JFrame {
 	
 	char selectedLetter = 0;
 	
-	public gameUI() {
+	public gameUI(String playername) {
+		gameFrame.setTitle("Scrabble: " + playername);
 		Field.setLayout(new GridLayout(20, 20, 0, 0));
 		Field.setBounds(20, 20, 20 * 30, 20 * 30);
 		Field.setOpaque(false);
