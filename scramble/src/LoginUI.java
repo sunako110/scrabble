@@ -3,6 +3,7 @@ package scramble;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -36,7 +37,7 @@ public class LoginUI extends JFrame {
 	 */
 	public static void main(String[] args) {
 		new LoginUI();
-		System.out.println("Hello World !");
+		System.out.println("Waiting for connection...");
 		//LoginUI c = new LoginUI();
 	}
 
@@ -53,7 +54,11 @@ public class LoginUI extends JFrame {
 		    	}catch(Exception e){e.printStackTrace();JOptionPane.showMessageDialog(contentPane, "ERROR, we wouldn't connect....");}		  
 		      }else{
 			}
-		  }  
+		  } 
+	 
+	 public void dispose() {
+		 loginFrame.dispose();
+	 }
 	
 	 
 	 
@@ -65,7 +70,6 @@ public class LoginUI extends JFrame {
 		
 		//textArea.getText()+"\n"+
 	}
-	
 	
 	/**
 	 * Create the frame.
@@ -122,16 +126,22 @@ public class LoginUI extends JFrame {
 		            	"Start Game?", JOptionPane.YES_NO_OPTION,
 		                   JOptionPane.QUESTION_MESSAGE, null, null, null);
 		           if (confirm == JOptionPane.YES_OPTION) {
-		           		loginFrame.dispose();
+		           		try {
+							server.startGame();
+							client.startGame();
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 		            }
-			    	  new gameUI();
+			    	  
 			   } 
 			});
 
 		
 		loginFrame.setLocationRelativeTo(null);
 		loginFrame.setVisible(true);
-		loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 	}
 	

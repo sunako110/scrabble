@@ -13,6 +13,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabbleClien
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private LoginUI login;
+	private gameUI game;
 	public static final int HAND_SIZE = 7;
 	
 	private ScrabbleTile[] hand = new ScrabbleTile[HAND_SIZE];
@@ -49,7 +50,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabbleClien
 	}
 	
 	// Add a tile to hand if not full
-	public boolean addTile(ScrabbleTile tile) {
+/*	public boolean addTile(ScrabbleTile tile) {
 		if (numTiles == HAND_SIZE) {
 			return false;
 		}
@@ -85,16 +86,27 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabbleClien
 	public ScrabbleTile[] getHand() {
 		return this.hand;
 	}
-	
+*/	
 	// Print all tiles in hand with delimiter ','
-	public String printHand() {
-		StringJoiner sj = new StringJoiner(",", "{", "}");
-		
+/*	public char[] printHand() {
+		char [] letters = new char[HAND_SIZE]; 
 		for (int i = 0; i < numTiles; i++) {
-			sj.add(hand[i].toString());
+			letters[i] = hand[i].getLetter();
 		}
-		return sj.toString();
+		game.setLetterBar();
+		return letters;
 	}
+*/	
+	public void cannotStartGame() throws RemoteException {
+		login.btnStart.setEnabled(false);
+	}
+	
+	public void startGame() {
+		System.out.println("starting game...");
+		game = new gameUI(username);
+		login.dispose();
+	}
+	
 	
 	// Getter and setter methods
 	public int getNumTiles() {

@@ -9,4 +9,5 @@ public interface ScrabbleServerInt extends Remote {
 	public void publish (String s)throws RemoteException ;
 	public Vector<ScrabbleClientInt> getConnected() throws RemoteException ;
 	//public void publishPlayer() throws RemoteException;
+	public void startGame() throws RemoteException;
 }

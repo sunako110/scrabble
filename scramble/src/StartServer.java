@@ -9,7 +9,7 @@ public class StartServer {
 			 	java.rmi.registry.LocateRegistry.createRegistry(1099);
 			 	
 				ScrabbleServerInt b=new ScrabbleServer();	
-				Naming.rebind("rmi://192.168.1.128/myabc", b);
+				Naming.rebind("rmi://10.12.195.88/myabc", b);
 				System.out.println("[System] Server is ready.");
 			}catch (Exception e) {
 					System.out.println("Server failed: " + e);
