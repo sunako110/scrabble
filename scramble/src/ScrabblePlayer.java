@@ -1,3 +1,4 @@
+package scramble;
 import java.util.StringJoiner;
 import java.util.List;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 	private ScrabbleTile[] hand = new ScrabbleTile[HAND_SIZE];
 	private int numTiles = 0;
 	private int score = 0;
+	private boolean isTurn = false;
 	
 	protected ScrabblePlayer() throws RemoteException {
 		super();
@@ -96,10 +98,10 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 		return letters;
 	}
 */	
-	public void cannotStartGame() throws RemoteException {
+/*	public void cannotStartGame() throws RemoteException {
 		login.btnStart.setEnabled(false);
 	}
-	
+*/	
 	public void startGame() {
 		System.out.println("starting game...");
 		login.startNewGame();
@@ -107,6 +109,26 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 	
 	public void setNewGame(gameUI game) {
 		this.game = game;
+	}
+	
+	public void addWord(ArrayList<String> word) {
+		game.addWordList(word);
+	}
+	
+	public void setTurn(boolean turn) {
+		isTurn = true;
+	}
+	
+	public boolean getTurn() {
+		return isTurn;
+	}
+	
+	public void rejected() {
+		game.wordNotAccepted();
+	}
+	
+	public void newTurn(Character[][] board) {
+		game.setNewTurn(board);
 	}
 	
 	

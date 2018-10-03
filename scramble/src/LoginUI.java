@@ -1,3 +1,5 @@
+package scramble;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
@@ -65,12 +67,7 @@ public class LoginUI extends JFrame {
 	 public void startNewGame() {
 		 //loginFrame.dispose();
 		  loginFrame.setVisible(false);
-		 try {
-			client.setNewGame(new gameUI(client.getName()));
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 client.setNewGame(new gameUI(client,server));
 	 }
 	 
 	public void addPlayerPool(ArrayList<String> name) {

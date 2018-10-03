@@ -1,6 +1,10 @@
+package scramble;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,7 +18,7 @@ public class gameUI extends JFrame {
 	public static final int HAND_SIZE = 7;
 	private static final long serialVersionUID = 1L;
 	
-	JFrame gameFrame = new JFrame("Scramble");
+	JFrame gameFrame = new JFrame("Scrabble");
 	JButton clearButton = new JButton("Clear");
 	JButton commitButton = new JButton("Commit");
 	JButton passButton = new JButton("Pass");
@@ -28,14 +32,21 @@ public class gameUI extends JFrame {
 	JButton voteButtonYes = new JButton();
 	JButton voteButtonNo = new JButton();
 	JTextArea wordArea = new JTextArea();
-	Character commitStore[][] = new Character[BOARD_SIZE][BOARD_SIZE];
-	
-	
+	private Character commitStore[][] = new Character[BOARD_SIZE][BOARD_SIZE];
+	private ScrabblePlayer player;
+	private ScrabbleServerInt server;
 	
 	char selectedLetter = 0;
 	
-	public gameUI(String playername) {
-		gameFrame.setTitle("Scrabble: " + playername);
+	public gameUI(ScrabblePlayer player, ScrabbleServerInt server) {
+		this.player = player;
+		this.server = server;
+		try {
+			gameFrame.setTitle("Scrabble: " + player.getName());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Field.setLayout(new GridLayout(20, 20, 0, 0));
 		Field.setBounds(20, 20, 20 * 30, 20 * 30);
 		Field.setOpaque(false);
@@ -102,12 +113,11 @@ public class gameUI extends JFrame {
 				LetterButton tmpbutton = (LetterButton) e.getSource();
 				if (tmpbutton.isFocusPainted()) {
 					refreshFocusPaint(letters);
-					tmpbutton.setFocusPainted(false);
-					tmpbutton.setBackground(new Color(3, 59, 90));
+					//tmpbutton.setBackground(new Color(3, 59, 90));
 				} else {
 					selectedLetter = tmpbutton.getLetter();
 					refreshFocusPaint(letters);
-					tmpbutton.setBackground(Color.RED);
+					//tmpbutton.setBackground(Color.RED);
 					tmpbutton.setFocusPainted(true);
 				}
 			}
@@ -119,10 +129,14 @@ public class gameUI extends JFrame {
 			letters[i]= new LetterButton();
 			letters[i].setBounds(640 + i*40, 200, 40, 40);
 			letters[i].setFocusPainted(false);
-	        letters[i].setForeground(new Color(0, 135, 200).brighter());
-	        letters[i].setHorizontalTextPosition(SwingConstants.CENTER);
-	        letters[i].setBorder(null);
-	        letters[i].setBackground(new Color(3, 59, 90));
+			if(!player.getTurn()) {
+				letters[i].setEnabled(false);
+				letters[i].setOpaque(true);
+			}
+	    //    letters[i].setForeground(new Color(0, 135, 200).brighter());
+	    //    letters[i].setHorizontalTextPosition(SwingConstants.CENTER);
+	   //     letters[i].setBorder(null);
+	   //     letters[i].setBackground(new Color(3, 59, 90));
 	  //      letters[i].setHoverBackgroundColor(new Color(3, 59, 90).brighter());
 	  //      letters[i].setPressedBackgroundColor(Color.PINK);
 			frame.add(letters[i]);
@@ -190,6 +204,33 @@ public class gameUI extends JFrame {
 		voteButtonNo.setFocusable(false);
 		voteButtonNo.setBounds(810, 360, 100, 40);
 		
+		ActionListener clickYes = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					try {
+						server.vote(true);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+			}
+		};
+		voteButtonYes.addActionListener(clickYes);
+		
+		ActionListener clickNo = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					try {
+						server.vote(false);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+			}
+		};
+		voteButtonNo.addActionListener(clickNo);
+		
+		
 		frame.add(wordArea);
 		frame.add(voteButtonYes);
 		frame.add(voteButtonNo);
@@ -231,14 +272,20 @@ public class gameUI extends JFrame {
 				//Store new added letter and its position
 				for (int i = 0; i < BOARD_SIZE; i++) {
 					for (int j = 0; j < BOARD_SIZE; j++) {
-						if ((buttons[i][j].isEnabled()) && (buttons[i][j].getIcon() != null)) {
+						if (buttons[i][j].getIcon() != null) {
 							commitStore[i][j] = buttons[i][j].getLetter();
 						}else {
 							commitStore[i][j] = 0;
 						}
 					}
 				}
-				
+				try {
+					
+					server.sendWord(commitStore);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 	/*			for (int i = 0; i < BOARD_SIZE; i++) {
 					for (int j = 0; j < BOARD_SIZE; j++) {
@@ -291,6 +338,56 @@ public class gameUI extends JFrame {
 			}
 		};
 		exitButton.addActionListener(click);
+	}
+	
+	public void addWordList(ArrayList<String> st) {
+		wordArea.setText(null);
+		for(int i=0;i<st.size();i++) {
+			wordArea.append(st.get(i) + "\n");
+		}
+	}
+	
+	public void wordNotAccepted() {
+		JOptionPane.showMessageDialog(gameFrame, "Your word(s) are not accepted by all players.Please try again or press \"pass\" button.");
+		for(int i = 0; i < HAND_SIZE; i++) {
+			letters[i].setEnabled(true);
+			letters[i].setFocusPainted(false);
+			}
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
+				if(buttons[i][j].isEnabled()) {
+				buttons[i][j].setLetter((char) 0);
+				}
+			}
+		}
+	}
+	
+	public void setNewTurn(Character[][] board) {
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
+				buttons[i][j].setLetter(board[i][j]);
+				if (buttons[i][j].getIcon() != null) {
+					//System.out.println("play check");
+					buttons[i][j].setEnabled(false);
+				}
+			}
+		}
+		
+		for (int i = 0; i < HAND_SIZE; i++) {
+			// reset letterBar
+			if (letters[i].isSelected()) {
+				letters[i].setSelected(false);
+				letters[i].refreshLetter();
+			}
+			if(!player.getTurn()) {
+				letters[i].setEnabled(false);
+				letters[i].setOpaque(true);
+			}else {
+				letters[i].setEnabled(true);
+				letters[i].setOpaque(false);
+			}
+			letters[i].setFocusPainted(false);
+		}
 	}
 
 	
