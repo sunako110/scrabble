@@ -64,6 +64,7 @@ public class LoginUI extends JFrame {
 	 
 	 public void startNewGame() {
 		 //loginFrame.dispose();
+		  loginFrame.setVisible(false);
 		 try {
 			client.setNewGame(new gameUI(client.getName()));
 		} catch (RemoteException e) {
