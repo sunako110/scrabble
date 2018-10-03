@@ -1,0 +1,19 @@
+import java.rmi.*;
+import java.util.ArrayList;
+ 
+
+public interface ScrabblePlayerInt extends Remote{
+	public void update (String name)throws RemoteException ;
+	public String getName()throws RemoteException ;
+	public void addPlayer(ArrayList<String> s) throws RemoteException;
+//	public boolean addTile(ScrabbleTile tile)throws RemoteException;
+//	public boolean hasTile(ScrabbleTile tile)throws RemoteException;
+//	public boolean hasTiles(ScrabbleTurn turn)throws RemoteException;
+//	public ScrabbleTile[] getHand()throws RemoteException;
+	public int getScore()throws RemoteException;
+	public void updateScore(int points)throws RemoteException;
+//	public char[] printHand()throws RemoteException;
+	public void cannotStartGame()throws RemoteException;
+	public void startGame()throws RemoteException;
+	public int getNumTiles()throws RemoteException;
+}

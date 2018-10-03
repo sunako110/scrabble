@@ -1,10 +1,9 @@
-package scramble;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -56,11 +55,22 @@ public class LoginUI extends JFrame {
 			}
 		  } 
 	 
-	 public void dispose() {
-		 loginFrame.dispose();
-	 }
 	
+	 public void print(Vector<ScrabblePlayerInt> v) throws RemoteException {
+		 for(int i = 0; i < v.size(); i++) {
+				System.out.println(v.get(i).getName());
+			}
+	 }
 	 
+	 public void startNewGame() {
+		 //loginFrame.dispose();
+		 try {
+			client.setNewGame(new gameUI(client.getName()));
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 }
 	 
 	public void addPlayerPool(ArrayList<String> name) {
 		textArea.setText(null);
@@ -126,9 +136,16 @@ public class LoginUI extends JFrame {
 		            	"Start Game?", JOptionPane.YES_NO_OPTION,
 		                   JOptionPane.QUESTION_MESSAGE, null, null, null);
 		           if (confirm == JOptionPane.YES_OPTION) {
+		        	   try {
+						print(server.getConnected());
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+		        	   
 		           		try {
 							server.startGame();
-							client.startGame();
+							//client.startGame();
 						} catch (RemoteException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();

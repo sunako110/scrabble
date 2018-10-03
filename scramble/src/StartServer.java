@@ -1,5 +1,3 @@
-package scramble;
-
 import java.rmi.Naming;
 
 public class StartServer {
@@ -9,7 +7,7 @@ public class StartServer {
 			 	java.rmi.registry.LocateRegistry.createRegistry(1099);
 			 	
 				ScrabbleServerInt b=new ScrabbleServer();	
-				Naming.rebind("rmi://10.12.195.88/myabc", b);
+				Naming.rebind("rmi://10.13.90.195/myabc", b);
 				System.out.println("[System] Server is ready.");
 			}catch (Exception e) {
 					System.out.println("Server failed: " + e);

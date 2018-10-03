@@ -1,4 +1,3 @@
-package scramble;
 import java.util.StringJoiner;
 import java.util.List;
 import java.util.Arrays;
@@ -6,14 +5,14 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-public class ScrabblePlayer extends UnicastRemoteObject implements ScrabbleClientInt{
+public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlayerInt{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private LoginUI login;
-	private gameUI game;
+	public gameUI game;
 	public static final int HAND_SIZE = 7;
 	
 	private ScrabbleTile[] hand = new ScrabbleTile[HAND_SIZE];
@@ -103,8 +102,11 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabbleClien
 	
 	public void startGame() {
 		System.out.println("starting game...");
-		game = new gameUI(username);
-		login.dispose();
+		login.startNewGame();
+	}
+	
+	public void setNewGame(gameUI game) {
+		this.game = game;
 	}
 	
 	
