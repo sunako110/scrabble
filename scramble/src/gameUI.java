@@ -125,7 +125,6 @@ public class gameUI extends JFrame {
 			
 		for (int i = 0; i < HAND_SIZE; i++) {
 			// Request letter and send
-			
 			letters[i]= new LetterButton();
 			letters[i].setBounds(640 + i*40, 200, 40, 40);
 			letters[i].setFocusPainted(false);
