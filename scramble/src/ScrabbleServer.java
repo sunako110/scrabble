@@ -13,6 +13,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 	Character[][] board = new Character[BOARD_SIZE][BOARD_SIZE];
 	Character[][] tmpBoard = new Character[BOARD_SIZE][BOARD_SIZE];
 	ArrayList<String> wordList = new ArrayList<String>();
+	ArrayList<String> newWordList = new ArrayList<String>();
 	
 	protected ScrabbleServer() throws RemoteException {
 		super();
