@@ -1,5 +1,6 @@
 import java.rmi.*;
 import java.util.ArrayList;
+import java.util.Map;
  
 
 public interface ScrabblePlayerInt extends Remote{
@@ -22,4 +23,6 @@ public interface ScrabblePlayerInt extends Remote{
 	public void rejected()throws RemoteException;
 	public void newTurn(Character[][] board)throws RemoteException;
 	public void addScore(ArrayList<String> a) throws RemoteException;
+	public void endGame(Map<String,Integer> a) throws RemoteException;
+	
 }

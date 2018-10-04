@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -128,7 +129,6 @@ public class gameUI extends JFrame {
 			letters[i].setFocusPainted(false);
 			if(!player.getTurn()) {
 				letters[i].setEnabled(false);
-				letters[i].setOpaque(true);
 			}
 	    //    letters[i].setForeground(new Color(0, 135, 200).brighter());
 	    //    letters[i].setHorizontalTextPosition(SwingConstants.CENTER);
@@ -312,7 +312,12 @@ public class gameUI extends JFrame {
 		frame.add(passButton);
 		ActionListener click = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				try {
+					server.pass();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		};
@@ -359,6 +364,14 @@ public class gameUI extends JFrame {
 		}
 	}
 	
+	
+	public void endGame(Map<String,Integer> a) {
+		gameFrame.setVisible(false);
+		player.setEndGame(new EndgameUI(player,server,a));
+		
+		
+	}
+	
 	public void setNewTurn(Character[][] board) {
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
@@ -376,12 +389,11 @@ public class gameUI extends JFrame {
 				letters[i].setSelected(false);
 				letters[i].refreshLetter();
 			}
+			System.out.println(player.getTurn());
 			if(!player.getTurn()) {
 				letters[i].setEnabled(false);
-				letters[i].setOpaque(true);
 			}else {
 				letters[i].setEnabled(true);
-				letters[i].setOpaque(false);
 			}
 			letters[i].setFocusPainted(false);
 		}

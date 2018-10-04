@@ -7,11 +7,12 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 	private Vector<ScrabblePlayerInt> playerList=new Vector<ScrabblePlayerInt>();
 	ArrayList<String> nameList = new ArrayList<String>();
 	//ScrabbleGame game;
-	int playerNum, playerSeq,voteNum, voteYes;
+	int playerNum, playerSeq,voteNum, voteYes,passNum;
 	Character[][] board = new Character[BOARD_SIZE][BOARD_SIZE];
 	Character[][] tmpBoard = new Character[BOARD_SIZE][BOARD_SIZE];
 	ArrayList<String> wordList = new ArrayList<String>();
 	ArrayList<String> newWordList = new ArrayList<String>();
+	Map<String,Integer> userScore = new HashMap<String,Integer>();
 	
 	protected ScrabbleServer() throws RemoteException {
 		super();
@@ -88,9 +89,15 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 
 	@Override
 	public void startGame() throws RemoteException {
-		Collections.shuffle(Arrays.asList(playerList));
+		//Collections.shuffle(Arrays.asList(playerList));
 		playerSeq = 0;
+		passNum =0;
 		playerList.get(playerSeq).setTurn(true);
+		for(int i = 0; i < BOARD_SIZE; i++) {
+			for(int j = 0; j < BOARD_SIZE; j++) {
+				board[i][j] = 0;
+			}
+		}
 		for(int i = 0; i < playerNum; i++) {
 			//System.out.println(playerList.get(i).getName());
 			playerList.get(i).startGame();
@@ -102,6 +109,35 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 			
 		}*/
 	}
+	
+/*	public void setTurn() throws RemoteException{
+		playerSeq=0;
+		playerNum = playerList.size();
+		playerList.get(playerSeq).setTurn(true);
+		for(int i = 0; i < playerNum; i++) {
+			//System.out.println(playerList.get(i).getName());
+			playerList.get(i).startGame();
+		}
+		while(true) {
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			playerSeq++;
+			playerList.get(playerSeq).setTurn(true);
+			
+		}
+	}*/
 	
 	public void sendWord(Character[][] board) {
 		newWordList.clear();
@@ -168,7 +204,66 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 		voteYes = 0;
 	}
 	
-	synchronized public void vote(boolean votes) {
+	public void pass() throws RemoteException {
+		
+		passNum++;
+		
+		if(passNum == playerNum) {
+			
+			 System.out.println("End game...");
+			 for(int i = 0; i<playerNum;i++) {
+				ScrabblePlayerInt tmp = (ScrabblePlayerInt) playerList.get(i);
+				userScore.put(tmp.getName(), tmp.getScore());
+			}
+			 for(int i = 0; i<playerNum;i++) {
+					ScrabblePlayerInt tmp2 = (ScrabblePlayerInt) playerList.get(i);
+					tmp2.endGame(userScore);
+					System.out.println(i);
+				}
+			
+		} else {
+			
+			try{
+				for(int i=0;i<playerNum;i++){
+					playerList.get(playerSeq).setTurn(false);
+					System.out.println(playerList.get(i).getTurn());
+				}
+				playerSeq++;
+				if(playerSeq==playerNum) {
+					playerSeq=0;
+					passNum=0;
+				}
+				playerList.get(playerSeq).setTurn(true);
+				System.out.println(playerSeq);
+				System.out.println(playerList.get(playerSeq).getTurn());
+				for(int i=0;i<playerNum;i++){
+				    ScrabblePlayerInt tmp1=(ScrabblePlayerInt)playerList.get(i);
+				    	tmp1.newTurn(board);
+
+				}
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for(int i=0;i<playerNum;i++){
+			    try{
+			     	ScrabblePlayerInt tmp1=(ScrabblePlayerInt)playerList.get(i);
+			     	tmp1.newTurn(board);
+			     	System.out.println("YYYYY");
+			    }catch(Exception e){
+			    	//problem with the client not connected.
+			    	//Better to remove it
+			    }
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	
+	synchronized public void vote(boolean votes) throws RemoteException {
 		voteNum++;
 		if(votes ==true) {
 			voteYes++;
@@ -196,6 +291,24 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 						board[i][j]=tmpBoard[i][j];
 					}
 				}
+				
+				try{
+					for(int i=0;i<playerNum;i++){
+						playerList.get(playerSeq).setTurn(false);
+						System.out.println(playerList.get(i).getTurn());
+					}
+					playerSeq++;
+					if(playerSeq==playerNum) {
+						playerSeq=0;
+						passNum =0;
+					}
+					playerList.get(playerSeq).setTurn(true);
+					System.out.println(playerSeq);
+					System.out.println(playerList.get(playerSeq).getTurn());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				for(int i=0;i<playerNum;i++){
 				    try{
 				     	ScrabblePlayerInt tmp=(ScrabblePlayerInt)playerList.get(i);
@@ -204,14 +317,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 				    	//problem with the client not connected.
 				    	//Better to remove it
 				    }
-				}
-				try {
-					playerList.get(playerSeq).setTurn(false);
-					playerSeq++;
-					playerList.get(playerSeq).setTurn(true);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			

@@ -1,5 +1,3 @@
-package scramble;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -156,6 +154,10 @@ public class GridButton extends JButton{
 			setIcon(null);
 			break;
 		}
+	}
+	
+	public char getLetter() {
+		return this.letter;
 	}
 	
 	public boolean hasLetter() {

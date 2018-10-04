@@ -1,6 +1,8 @@
 import java.util.StringJoiner;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 	private String username;
 	private LoginUI login;
 	public gameUI game;
+	public EndgameUI end;
 	public static final int HAND_SIZE = 7;
 	
 	private ScrabbleTile[] hand = new ScrabbleTile[HAND_SIZE];
@@ -49,58 +52,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 		return username;
 	}
 	
-	// Add a tile to hand if not full
-/*	public boolean addTile(ScrabbleTile tile) {
-		if (numTiles == HAND_SIZE) {
-			return false;
-		}
-		hand[numTiles] = tile;
-		numTiles++;
-		return true;
-	}
-	
-	// Checks whether player has a single tile
-	public boolean hasTile(ScrabbleTile tile) {
-		for (int i = 0; i < numTiles; i++) {
-			if (tile == this.hand[i]) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	// Checks whether player has all tiles for the turn
-	public boolean hasTiles(ScrabbleTurn turn) {
-		List<ScrabbleTile> tiles = new ArrayList<ScrabbleTile>(Arrays.asList(this.hand));
-		ScrabbleMove[] move = turn.getMoves();
-		
-		for(ScrabbleMove m : move) {
-			if (!tiles.remove(m.getTile())) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	// Get hand as ScrabbleTile[] object
-	public ScrabbleTile[] getHand() {
-		return this.hand;
-	}
-*/	
-	// Print all tiles in hand with delimiter ','
-/*	public char[] printHand() {
-		char [] letters = new char[HAND_SIZE]; 
-		for (int i = 0; i < numTiles; i++) {
-			letters[i] = hand[i].getLetter();
-		}
-		game.setLetterBar();
-		return letters;
-	}
-*/	
-/*	public void cannotStartGame() throws RemoteException {
-		login.btnStart.setEnabled(false);
-	}
-*/	
+
 	//start game UI
 	public void startGame() {
 		System.out.println("starting game...");
@@ -112,20 +64,32 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 		this.game = game;
 	}
 	
+
+	public void endGame(Map<String,Integer> a) {
+		System.out.println("ending game...");
+		game.endGame(a);
+	}
+	
+	//set game UI for the player
+	public void setEndGame(EndgameUI end) {
+		this.end = end;
+	}
+	
 	public void addScore(ArrayList<String> a) throws RemoteException {
 		for(int i=0;i<a.size();i++) {
 			score += a.get(i).length();
 		}
 	}
 	
-	
+	//display new word to in the text area
 	public void addWord(ArrayList<String> word) {
 		game.addWordList(word);
 	}
 	
 	public void setTurn(boolean turn) {
-		isTurn = true;
+		isTurn = turn;
 	}
+
 	
 	public boolean getTurn() {
 		return isTurn;

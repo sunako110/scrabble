@@ -10,4 +10,5 @@ public interface ScrabbleServerInt extends Remote {
 	public void startGame() throws RemoteException;
 	public void sendWord(Character[][] commitStore)throws RemoteException;
 	public void vote(boolean b)throws RemoteException;
+	public void pass() throws RemoteException;
 }
