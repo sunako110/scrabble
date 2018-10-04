@@ -104,40 +104,61 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 	}
 	
 	public void sendWord(Character[][] board) {
+		newWordList.clear();
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				tmpBoard[i][j]=board[i][j];
 			}
 		}
+	
 		for (int i = 0; i < BOARD_SIZE; i++) {
-			String word = "";
+			String word ="";
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				if(tmpBoard[i][j]!=0) {
 					word = word + tmpBoard[i][j].toString();
+				}else {
+					word = word + " ";
 				}
 			}
-			if(!word.equals("")&&!(word.length()==1)) {
-				wordList.add(word);
-			}
+			
+			StringTokenizer st = new StringTokenizer(word);
+			while (st.hasMoreTokens()) {
+		         String w = st.nextToken();
+		         if(!wordList.contains(w) && w.length()>1) {
+		        	 newWordList.add(w);
+		        	 wordList.add(w);
+		         }
+		     }
 		}
+		
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			String word = "";
 			for (int i = 0; i < BOARD_SIZE; i++) {
 				if(tmpBoard[i][j]!=0) {
 					word = word + tmpBoard[i][j].toString();
+				}else if(tmpBoard[i][j]==0) {
+					word = word + " ";
 				}
-			}
-			if(!word.equals("")&&!(word.length()==1)) {
-				wordList.add(word);
-			}
+			}	
+			
+			StringTokenizer st = new StringTokenizer(word);
+			while (st.hasMoreTokens()) {
+		         String w = st.nextToken();
+		         if(!wordList.contains(w) && w.length()>1) {
+		        	 newWordList.add(w);
+		        	 wordList.add(w);
+		         }
+		     }
 		}
-		for(int i=0; i < wordList.size();i++) {
-			System.out.println(wordList.get(i));
+		
+		for(int i=0; i < newWordList.size();i++) {
+			System.out.println(newWordList.get(i));
 		}
+		
 		for(int i=0;i<playerNum;i++){
 		    try{
 		     	ScrabblePlayerInt tmp=(ScrabblePlayerInt)playerList.get(i);
-		     	tmp.addWord(wordList);
+		     	tmp.addWord(newWordList);
 		    }catch(Exception e){
 		    	//problem with the client not connected.
 		    	//Better to remove it
