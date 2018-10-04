@@ -1,5 +1,3 @@
-package scramble;
-
 import java.rmi.*;
 import java.util.*;
 

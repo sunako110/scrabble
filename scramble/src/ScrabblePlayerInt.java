@@ -1,5 +1,3 @@
-package scramble;
-
 import java.rmi.*;
 import java.util.ArrayList;
  
@@ -23,4 +21,5 @@ public interface ScrabblePlayerInt extends Remote{
 	public void addWord(ArrayList<String> wordList)throws RemoteException;
 	public void rejected()throws RemoteException;
 	public void newTurn(Character[][] board)throws RemoteException;
+	public void addScore(ArrayList<String> a) throws RemoteException;
 }

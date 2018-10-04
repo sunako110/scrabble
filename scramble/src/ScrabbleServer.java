@@ -1,5 +1,3 @@
-package scramble;
-
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
@@ -61,6 +59,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 		return playerList;
 	}
 
+	//publish player list
 	@Override
 	public void publish(String s) throws RemoteException {
 		nameList.clear();
@@ -184,6 +183,14 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 					e.printStackTrace();
 				}
 			}else {
+				
+				try {
+					playerList.get(playerSeq).addScore(newWordList);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				for (int i = 0; i < BOARD_SIZE; i++) {
 					for (int j = 0; j < BOARD_SIZE; j++) {
 						board[i][j]=tmpBoard[i][j];

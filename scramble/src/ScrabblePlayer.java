@@ -1,4 +1,3 @@
-package scramble;
 import java.util.StringJoiner;
 import java.util.List;
 import java.util.Arrays;
@@ -102,14 +101,23 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 		login.btnStart.setEnabled(false);
 	}
 */	
+	//start game UI
 	public void startGame() {
 		System.out.println("starting game...");
 		login.startNewGame();
 	}
 	
+	//set game UI for the player
 	public void setNewGame(gameUI game) {
 		this.game = game;
 	}
+	
+	public void addScore(ArrayList<String> a) throws RemoteException {
+		for(int i=0;i<a.size();i++) {
+			score += a.get(i).length();
+		}
+	}
+	
 	
 	public void addWord(ArrayList<String> word) {
 		game.addWordList(word);
@@ -136,7 +144,7 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 	public int getNumTiles() {
 		return this.numTiles;
 	}
-	
+
 	public int getScore() {
 		return this.score;
 	}
