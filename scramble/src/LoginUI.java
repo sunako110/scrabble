@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -47,9 +49,10 @@ public class LoginUI extends JFrame {
 		    //	if (usernameField.getText().length()<2){JOptionPane.showMessageDialog(frame, "You need to type a name."); return;}
 		  //  	if (ip.getText().length()<2){JOptionPane.showMessageDialog(frame, "You need to type an IP."); return;}	    	
 		    	try{
+		    			Registry registry = LocateRegistry.getRegistry(addressField.getText());
 					client = new ScrabblePlayer(usernameField.getText());
 		    		    client.setLoginUI(this);
-					server=(ScrabbleServerInt)Naming.lookup("rmi://"+addressField.getText()+"/myabc");
+					server=(ScrabbleServerInt)registry.lookup("rmi://"+addressField.getText()+"/myabc");
 					server.login(client);
 					server.publish(usernameField.getText());
 		    	}catch(Exception e){e.printStackTrace();JOptionPane.showMessageDialog(contentPane, "ERROR, we wouldn't connect....");}		  
