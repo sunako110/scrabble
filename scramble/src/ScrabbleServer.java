@@ -32,6 +32,21 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 		playerNum++;
 		return true;	
 	}
+	
+	
+	
+	public void exitAllGame() throws RemoteException {
+		 System.out.println("End game...");
+		 for(int i = 0; i<playerNum;i++) {
+			ScrabblePlayerInt tmp5 = (ScrabblePlayerInt) playerList.get(i);
+			userScore.put(tmp5.getName(), tmp5.getScore());
+		}
+		 for(int i = 0; i<playerNum;i++) {
+				ScrabblePlayerInt tmp6 = (ScrabblePlayerInt) playerList.get(i);
+				tmp6.endGame(userScore);
+				System.out.println(i);
+			}
+	}
 
 /*	@Override
 	public void publishPlayer() throws RemoteException {
@@ -203,6 +218,9 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 		voteNum = 0;
 		voteYes = 0;
 	}
+	
+	
+	
 	
 	public void pass() throws RemoteException {
 		

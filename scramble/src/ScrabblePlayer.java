@@ -75,6 +75,8 @@ public class ScrabblePlayer extends UnicastRemoteObject implements ScrabblePlaye
 		this.end = end;
 	}
 	
+	
+	
 	public void addScore(ArrayList<String> a) throws RemoteException {
 		for(int i=0;i<a.size();i++) {
 			score += a.get(i).length();

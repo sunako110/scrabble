@@ -335,12 +335,24 @@ public class gameUI extends JFrame {
 	            		"Close Window?", JOptionPane.YES_NO_OPTION,
 	                    JOptionPane.QUESTION_MESSAGE, null, null, null);
 	            if (confirm == JOptionPane.YES_OPTION) {
-	                System.exit(0);
+	            		try {
+							server.exitAllGame();
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+	            		//exitGame();
 	            }
 			}
 		};
 		exitButton.addActionListener(click);
 	}
+	
+	public void exitGame() {
+		System.exit(0);
+	}
+	
+	
 	
 	public void addWordList(ArrayList<String> st) {
 		wordArea.setText(null);
@@ -394,6 +406,7 @@ public class gameUI extends JFrame {
 				letters[i].setEnabled(false);
 			}else {
 				letters[i].setEnabled(true);
+				
 			}
 			letters[i].setFocusPainted(false);
 		}
