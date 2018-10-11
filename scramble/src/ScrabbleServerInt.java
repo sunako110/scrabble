@@ -12,5 +12,8 @@ public interface ScrabbleServerInt extends Remote {
 	public void vote(boolean b)throws RemoteException;
 	public void pass() throws RemoteException;
 	public void exitAllGame() throws RemoteException;
-	
+	public boolean checkName(String s) throws RemoteException;
+	public void clearName() throws RemoteException;
+	public void addNametoList() throws RemoteException;
+
 }

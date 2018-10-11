@@ -13,6 +13,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 	ArrayList<String> wordList = new ArrayList<String>();
 	ArrayList<String> newWordList = new ArrayList<String>();
 	Map<String,Integer> userScore = new HashMap<String,Integer>();
+
 	
 	protected ScrabbleServer() throws RemoteException {
 		super();
@@ -76,15 +77,19 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 	}
 
 	//publish player list
-	@Override
-	public void publish(String s) throws RemoteException {
+	public void clearName() throws RemoteException {
 		nameList.clear();
+	}
+	
+	public void addNametoList() throws RemoteException {
 		for(int i=0;i<playerNum;i++){
 			ScrabblePlayerInt n=(ScrabblePlayerInt)playerList.get(i);
 			nameList.add(n.getName());
 		}
 	
-		
+	}
+	@Override
+	public void publish(String s) throws RemoteException {
 			for(int i=0;i<playerNum;i++){
 			    try{
 			     	ScrabblePlayerInt tmp=(ScrabblePlayerInt)playerList.get(i);
@@ -101,6 +106,19 @@ public class ScrabbleServer extends UnicastRemoteObject implements ScrabbleServe
 			}
 	*/	
 	}
+	
+	public boolean checkName(String s) throws RemoteException {
+		boolean check = true;
+		for (int i =0; i<playerNum;i++) {
+			if (playerList.get(i).getName().equals(s)) {
+				check = false;
+				break;
+			}
+		}
+		return check;
+		
+	}
+	
 
 	@Override
 	public void startGame() throws RemoteException {

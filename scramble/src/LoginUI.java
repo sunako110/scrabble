@@ -47,12 +47,10 @@ public class LoginUI extends JFrame {
 		    //	if (usernameField.getText().length()<2){JOptionPane.showMessageDialog(frame, "You need to type a name."); return;}
 		  //  	if (ip.getText().length()<2){JOptionPane.showMessageDialog(frame, "You need to type an IP."); return;}	    	
 		    	try{
-		    			Registry registry = LocateRegistry.getRegistry(addressField.getText());
+		    		Registry registry = LocateRegistry.getRegistry(addressField.getText());
 					client = new ScrabblePlayer(usernameField.getText());
-		    		    client.setLoginUI(this);
+		    		client.setLoginUI(this);
 					server=(ScrabbleServerInt)registry.lookup("rmi://"+addressField.getText()+"/myabc");
-					server.login(client);
-					server.publish(usernameField.getText());
 		    	}catch(Exception e){e.printStackTrace();JOptionPane.showMessageDialog(contentPane, "ERROR, we wouldn't connect....");}		  
 		      }else{
 			}
@@ -124,7 +122,21 @@ public class LoginUI extends JFrame {
 		btnConnect.addActionListener(new ActionListener(){
 		   public void actionPerformed(ActionEvent e){ 
 		    	  doConnect();
-		    	  btnConnect.setEnabled(false);
+					try {
+						if(server.checkName(usernameField.getText())==true) {
+							server.login(client);
+							server.clearName();
+							server.addNametoList();
+							server.publish(usernameField.getText());
+							btnConnect.setEnabled(false);
+						}else {
+							JOptionPane.showMessageDialog(null, "The username has existed, please input again.", 
+									"Invalid username", JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 		   } 
 		});
 		

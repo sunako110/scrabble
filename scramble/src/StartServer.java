@@ -17,7 +17,7 @@ public class StartServer {
 				ScrabbleServerInt b=new ScrabbleServer();	
 			 	
 			 	registry = LocateRegistry.createRegistry(1099);
-			 	registry.rebind("rmi://10.13.90.195/myabc", b);
+			 	registry.rebind("rmi://192.168.1.196/myabc", b);
 			 	
 			 	
 				
