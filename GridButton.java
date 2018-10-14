@@ -156,6 +156,7 @@ public class GridButton extends JButton{
 		}
 	}
 	
+	
 	public char getLetter() {
 		return this.letter;
 	}
@@ -164,11 +165,16 @@ public class GridButton extends JButton{
 		return letter == 0;
 	}
 	
-	public void setLetterIndex(int index) {
-		this.letterIndex = index;
+	public void setLetterLocation(int i, int j) {
+		row = i;
+		column = j;
 	}
 	
-	public int getLetterIndex() {
-		return this.letterIndex;
+	public int getRow() {
+		return row;
+	}
+	
+	public int getColumn() {
+		return column;
 	}
 }

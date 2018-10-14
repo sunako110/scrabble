@@ -57,6 +57,18 @@ public class LoginUI extends JFrame {
 		
 	}
 	
+	public void abruptClosing() {
+		JOptionPane.showMessageDialog(contentPane, "ERROR, connection to server closed...");
+		System.exit(0);
+	}
+	
+	public void repeatedName() {
+		JOptionPane.showMessageDialog(contentPane, "ERROR: username is already existed, please try another username...and connect again");
+		usernameField.setText(null);
+		addressField.setText(null);
+		btnConnect.setEnabled(true);
+	}
+	
 	public void startNewGame() {
 		new gameUI(messageThread,output,username);
 	}
@@ -108,8 +120,9 @@ public class LoginUI extends JFrame {
 					   JOptionPane.showMessageDialog(contentPane, "ERROR, please enter a username or ip address....");
 					   addressField.setText(null);
 					   usernameField.setText(null);
-				   }
-				   catch(Exception exc) {
+				   }catch(UnknownHostException exc) {
+					   JOptionPane.showMessageDialog(contentPane, "ERROR, we couldn't find the server...");
+				   }catch(Exception exc) {
 					   JOptionPane.showMessageDialog(contentPane, "ERROR, we couldn't connect...");
 				   }
 				   
@@ -138,7 +151,7 @@ public class LoginUI extends JFrame {
 
 			loginFrame.setLocationRelativeTo(null);
 			loginFrame.setVisible(true);
-			loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			loginFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 			
 		}
 }

@@ -40,9 +40,8 @@ public class MessageThread extends Thread {
 				} else if (command.equals("start")) {
 					login.loginFrame.setVisible(false);
 					login.startNewGame();
-					if(list.equals("false")) {
-						game.notYourTurn();
-					}
+					game.setTurn(list);
+					game.setFirstMove(list);
 				} else if (command.equals("commit")) {
 					
 				} else if (command.equals("voteReject")) {
@@ -58,15 +57,17 @@ public class MessageThread extends Thread {
 					game.startVoting(list);
 					
 				} else if (command.equals("setTurn")) {
-					if(list.equals("false")) {
-						game.notYourTurn();
-					}else {
-						game.YourTurn();
-					}
+						game.setTurn(list);
 					
-				} 
+				} else if(command.equals("username")) {
+					if(list.equals("repeated")) {
+						login.repeatedName();
+					}
+				}
 				
-			} catch (IOException e) {
+			} catch (NullPointerException e) {
+				login.abruptClosing();
+			}catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();

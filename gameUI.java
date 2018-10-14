@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -43,15 +44,19 @@ public class gameUI extends JFrame {
 	JButton voteButtonYes = new JButton();
 	JButton voteButtonNo = new JButton();
 	JTextArea wordArea = new JTextArea();
+	JTextArea currentPlayerArea = new JTextArea();
 	static MessageThread messageThread;
 	private Character commitStore[][] = new Character[BOARD_SIZE][BOARD_SIZE];
 	private BufferedWriter output;
 	char selectedLetter = 0;
+	String username;
+	boolean isFirstMove;
 	
 //	private int score = 0;
 	
 	public gameUI(MessageThread thread, BufferedWriter output, String playerName) {
 		this.output = output;
+		username = playerName;
 		messageThread = thread;
 		messageThread.addGameUI(this);
 		gameFrame.setTitle("Scrabble: " + playerName);
@@ -71,6 +76,7 @@ public class gameUI extends JFrame {
 		addVotingAreaLabel(gameFrame);
 		addVotingAreaLabel(gameFrame);
 		addVotingArea(gameFrame);
+		addCurrentPlayerArea(gameFrame);
 		
 		gameFrame.add(Field);
 		gameFrame.setLocationRelativeTo(null);
@@ -84,7 +90,12 @@ public class gameUI extends JFrame {
 		            "Are you sure you want to close this window?", "Close Window?", 
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-		            	System.exit(0);
+		        	try {
+						output.write("gameEnds& "+"\n");
+						output.flush();
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(gameFrame, "ERROR, we couldn't send data...");
+					}
 		        }
 		    }
 		});
@@ -107,6 +118,15 @@ public class gameUI extends JFrame {
 		introduction.setEditable(false);
 		introduction.setBackground(null);
 		frame.add(introduction);
+	}
+	
+	public void addCurrentPlayerArea(JFrame frame) {
+		currentPlayerArea = new JTextArea(5,30);
+		currentPlayerArea.setText("Current Player: ");
+		currentPlayerArea.setBounds(640, 400, 300, 20);
+		currentPlayerArea.setEditable(false);
+		currentPlayerArea.setBackground(null);
+		frame.add(currentPlayerArea);
 	}
 	
 	
@@ -156,30 +176,35 @@ public class gameUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				GridButton tmpbutton = (GridButton) e.getSource();
 				if (tmpbutton.isEnabled() && (selectedLetter != 0)) {
-					int index = tmpbutton.getLetterIndex();
-					if (index != -1) {
-						letters[index].setEnabled(true);
-						letters[index].setSelected(false);
+					if(!isFirstMove) {
+						if(!testValidity(tmpbutton.getRow(),tmpbutton.getColumn())) {
+							JOptionPane.showMessageDialog(gameFrame, "ERROR: the letters must connect together...Try again");
+							selectedLetter = 0;
+							refreshFocusPaint(letters);
+							tmpbutton.setLetter((char) 0);
+	
+						}
+					}else {
+						isFirstMove = false;
 					}
+					
 					tmpbutton.setLetter(selectedLetter);
 					
 					for (int i = 0; i < HAND_SIZE; i++) {
 						if (letters[i].isFocusPainted()) {
-							tmpbutton.setLetterIndex(i);
 							letters[i].setEnabled(false);
 							letters[i].setSelected(true);
-							letters[i].setBackground(new Color(3, 59, 90));
 						}
 					}
 				}
-				if (tmpbutton.isEnabled() && selectedLetter == 0) {
+			/*	if (tmpbutton.isEnabled() && selectedLetter == 0) {
 					int index = tmpbutton.getLetterIndex();
 					if (index != -1) {
 						letters[index].setEnabled(true);
 						letters[index].setSelected(false);
 						tmpbutton.setLetter((char) 0);
 					}
-				}
+				}*/
 				selectedLetter = 0;
 			}
 		};
@@ -187,12 +212,27 @@ public class gameUI extends JFrame {
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				buttons[i][j] = new GridButton();
+				buttons[i][j].setLetterLocation(i,j);
 				buttons[i][j].setFocusable(false);
 		        field.add(buttons[i][j]);
 				buttons[i][j].addActionListener(click);
 			}
 		}
 	}
+	
+	public void setFirstMove() {
+		boolean valid = true;
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
+				if(buttons[i][j].getIcon()!=null) {
+					valid = false;
+				}
+			}
+		}
+		isFirstMove = valid;
+	}
+	
+
 	
 	public void addVotingArea(JFrame frame) {		
 		
@@ -259,7 +299,7 @@ public class gameUI extends JFrame {
 						}
 					}
 				}	
-				
+				setFirstMove();	
 			}
 		};
 		clearButton.addActionListener(click);
@@ -313,6 +353,17 @@ public class gameUI extends JFrame {
 		frame.add(passButton);
 		ActionListener click = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < HAND_SIZE; i++) {
+					letters[i].setEnabled(true);
+					letters[i].setFocusPainted(false);
+					}
+				for (int i = 0; i < BOARD_SIZE; i++) {
+					for (int j = 0; j < BOARD_SIZE; j++) {
+						if(buttons[i][j].isEnabled()) {
+						buttons[i][j].setLetter((char) 0);
+						}
+					}
+				}	
 				try {
 					output.write("pass& \n");
 					output.flush();
@@ -381,27 +432,24 @@ public class gameUI extends JFrame {
 		new EndgameUI(scoreBoard);
 	}
 	
-	public void setNewTurn(Character[][] board) {
-		for (int i = 0; i < BOARD_SIZE; i++) {
-			for (int j = 0; j < BOARD_SIZE; j++) {
-				buttons[i][j].setLetter(board[i][j]);
-				if (buttons[i][j].getIcon() != null) {
-					//System.out.println("play check");
-					buttons[i][j].setEnabled(false);
-				}
-			}
-		}
-	}
+
 	
-	public void notYourTurn() {
-		for(int i = 0; i<HAND_SIZE;i++) {
-			letters[i].setEnabled(false);
-		}
+	public void setTurn(String username) {
+		if(this.username.equals(username)) {
+			currentPlayerArea.setText("Your Turn Now!");
+			YourTurn();
+		}else {
+			currentPlayerArea.setText("Current Player: "+username);
+			for(int i = 0; i<HAND_SIZE;i++) {
+				letters[i].setEnabled(false);
+			}
 		clearButton.setEnabled(false);
 		commitButton.setEnabled(false);
 		passButton.setEnabled(false);
 		voteButtonYes.setEnabled(false);
 		voteButtonNo.setEnabled(false);
+		}
+		
 	}
 	
 	public void YourTurn() {
@@ -419,21 +467,28 @@ public class gameUI extends JFrame {
 		
 	public void findWords(Character[][] tmpBoard) {
 		ArrayList<String> newWordList = new ArrayList<String>();
+		HashMap<String,String> actualWord = new HashMap<>();
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			String word ="";
+			String position = "";
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				if(tmpBoard[i][j]!=0) {
 					word = word + tmpBoard[i][j].toString();
+					position = position+Integer.toString(i)+","+Integer.toString(j)+",";
 				}else {
 					word = word + " ";
+					position = position + Character.toString('&');
 				}
 			}
-			
+		//	actualWord.put(word, position);
 			StringTokenizer st = new StringTokenizer(word);
+			StringTokenizer sstt = new StringTokenizer(position,"&");
 			while (st.hasMoreTokens()) {
 		         String w = st.nextToken();
+		         String p = sstt.nextToken("&");
 		         if(!wordList.contains(w) && w.length()>1) {
 		        	 newWordList.add(w);
+		        	 actualWord.put(w,p);
 		        	 wordList.add(w);
 		         }
 		     }
@@ -441,19 +496,25 @@ public class gameUI extends JFrame {
 		
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			String word = "";
+			String position = "";
 			for (int i = 0; i < BOARD_SIZE; i++) {
 				if(tmpBoard[i][j]!=0) {
 					word = word + tmpBoard[i][j].toString();
+					position = position+Integer.toString(i)+","+Integer.toString(j)+",";
 				}else if(tmpBoard[i][j]==0) {
 					word = word + " ";
+					position = position + Character.toString('&');
 				}
 			}	
 			
 			StringTokenizer st = new StringTokenizer(word);
+			StringTokenizer sstt = new StringTokenizer(position,"&");
 			while (st.hasMoreTokens()) {
 		         String w = st.nextToken();
+		         String p = sstt.nextToken("&");
 		         if(!wordList.contains(w) && w.length()>1) {
 		        	 newWordList.add(w);
+		        	 actualWord.put(w,p);
 		        	 wordList.add(w);
 		         }
 		     }
@@ -463,20 +524,35 @@ public class gameUI extends JFrame {
 			possibilities[i]=newWordList.get(i);
 		}
 		String word = (String)JOptionPane.showInputDialog(gameFrame,"Choose your word:",
-				"What is the word you want to put?",JOptionPane.PLAIN_MESSAGE,null,possibilities,possibilities[0]);
+				"",JOptionPane.PLAIN_MESSAGE,null,possibilities,possibilities[0]);
 		if((word!=null)&&(word.length()>0)) {
+			String pi = actualWord.get(word);
+			StringTokenizer st = new StringTokenizer(pi,",");
+			char[] tmp = new char[400];
 			try {
-				String pane = "";
+				int c = 0;
 				for (int i = 0; i < BOARD_SIZE; i++) {
 					for (int j = 0; j < BOARD_SIZE; j++) {
-						if(buttons[i][j].getLetter() == 0) {
-							pane += "0";
+						if(buttons[i][j].getLetter() != '0' && !buttons[i][j].isEnabled()) {
+							tmp[c] = (char)buttons[i][j].getLetter();
 						}else {
-							pane += Character.toString(buttons[i][j].getLetter());
+							tmp[c]= '0';
 						}
-						
+						c+=1;
 					}
 				}
+				int count = 0;
+				while(st.hasMoreTokens()) {
+					int row, col,po;
+					row = Integer.parseInt(st.nextToken(","));
+					col = Integer.parseInt(st.nextToken(","));
+					po = row*20+col;
+					tmp[po]=word.charAt(count); 
+					//System.out.println(tmp[po]);
+					count+=1;
+				}
+				String pane = String.valueOf(tmp);
+				//System.out.println(pane);
 				output.write("commit&"+word+"\n");
 				output.write("setPane&"+pane+"\n");
 				//System.out.println(pane);
@@ -541,7 +617,66 @@ public class gameUI extends JFrame {
 		        	 wordList.add(w);
 		     }
 		
+		}
 	}
+	
+	public void setFirstMove(String username) {
+		if(this.username.equals(username)) {
+			isFirstMove = true;
+		}
+	}
+	
+	public boolean testValidity(int tmprow,int tmpcolumn) {
+		boolean valid = false;
+		//test the buttons at four corners
+		if(tmprow==0 && tmpcolumn==0) {
+			if(!(buttons[tmprow+1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn+1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmprow==19 && tmpcolumn==19) {
+			if(!(buttons[tmprow-1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn-1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmprow==0 && tmpcolumn==19) {
+			if(!(buttons[tmprow+1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn-1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmprow==19 && tmpcolumn==0) {
+			if(!(buttons[tmprow-1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn+1].getIcon()==null)) {
+				valid = true;
+			}
+		}
+		//test the buttons on edges
+		else if(tmprow==0) {
+			if(!(buttons[tmprow+1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn+1].getIcon()==null
+					&&buttons[tmprow][tmpcolumn-1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmprow==19) {
+			if(!(buttons[tmprow-1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn+1].getIcon()==null
+					&&buttons[tmprow][tmpcolumn-1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmpcolumn==0) {
+			if(!(buttons[tmprow+1][tmpcolumn].getIcon()==null&&buttons[tmprow-1][tmpcolumn].getIcon()==null
+					&&buttons[tmprow][tmpcolumn+1].getIcon()==null)) {
+				valid = true;
+			}
+		}else if(tmpcolumn==19) {
+			if(!(buttons[tmprow+1][tmpcolumn].getIcon()==null&&buttons[tmprow-1][tmpcolumn].getIcon()==null
+					&&buttons[tmprow][tmpcolumn-1].getIcon()==null)) {
+				valid = true;
+			}
+		}
+		//test all other buttons
+		else {
+			if(!(buttons[tmprow-1][tmpcolumn].getIcon()==null&&buttons[tmprow][tmpcolumn+1].getIcon()==null
+					&&buttons[tmprow][tmpcolumn-1].getIcon()==null&&buttons[tmprow+1][tmpcolumn].getIcon()==null)) {
+				valid = true;
+			}
+		}
+		
+		return valid;
 	}
 	
 		
