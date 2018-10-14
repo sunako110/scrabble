@@ -25,9 +25,20 @@ public class ScrabbleManager {
 	String pane = "";
 	
 	public void add(ScrabbleServer client, String username) throws UnsupportedEncodingException, IOException {
-		playerList.add(client);
-		System.out.println("add");
-		publish(updateUserPool(username));
+		boolean repeated = false;
+		for(int i=0;i<nameList.size();i++) {
+			if(username.equals(nameList.get(i))) {
+				repeated = true;
+			}
+		}
+		if(repeated) {
+			client.out("username&repeated");
+		}else {
+			playerList.add(client);
+			System.out.println("add");
+			publish(updateUserPool(username));
+		}
+		
 	}
 	
 	public void updateScoreBoard() {
@@ -57,6 +68,7 @@ public class ScrabbleManager {
 			clearVoteNumber();
 			scoreBoard.put(playerList.get(playerSeq), scoreBoard.get(playerList.get(playerSeq))+score);
 			playerSeq++;
+			clearPassNum();
 			if(playerSeq==playerList.size()) {
 				clearPlayerSeq();
 			}
@@ -92,7 +104,6 @@ public class ScrabbleManager {
 			playerSeq++;
 			if(playerSeq==playerList.size()) {
 				clearPlayerSeq();
-				clearPassNum();
 			}
 			setTurn(playerSeq);
 		}
@@ -113,26 +124,18 @@ public class ScrabbleManager {
 		clearPassNum();
 		clearVoteNumber();
 		updateScoreBoard();
-		ScrabbleServer tmp = playerList.get(0);
-		tmp.out("start&true");
-		for(int i = 1; i<playerList.size();i++) {
+		for(int i = 0; i<playerList.size();i++) {
+			ScrabbleServer tmp = playerList.get(i);
 			tmp = playerList.get(i);
-			tmp.out("start&false");
+			tmp.out("start&"+nameList.get(0));
 		}
 	}
 	
 	public void setTurn(int playerSeq) throws UnsupportedEncodingException, IOException{
 		for(int i = 0; i<playerList.size();i++) {
-			if(i==playerSeq) {
 				ScrabbleServer tmp = playerList.get(i);
-				tmp.out("setTurn&true");
-			}else {
-				ScrabbleServer tmp = playerList.get(i);
-				tmp.out("setTurn&false");
-			}
+				tmp.out("setTurn&"+nameList.get(playerSeq));
 		}
-		
-		
 	}
 	
 	public void endGame() throws UnsupportedEncodingException, IOException {
